@@ -23,7 +23,6 @@
 
     h1 { font-size: 2em; margin-bottom: 20px; }
 
-    /* 메뉴 결과 박스 */
     .menu {
       font-size: 1.7em;
       margin-bottom: 20px;
@@ -49,7 +48,6 @@
       color: #fff;
     }
 
-    /* 버튼 스타일 */
     button {
       margin: 5px;
       padding: 10px 20px;
@@ -68,19 +66,12 @@
 
     #footer-info { margin-top:30px; text-align:center; font-size:0.8em; color:#555; }
 
-    /* ===== 폰 최적화 ===== */
     @media (max-width: 768px) {
-      body {
-        font-size: 1.2rem;
-        padding: 15px;
-      }
+      body { font-size: 1.2rem; padding: 15px; }
       h1 { font-size: 1.5em; }
       .menu { font-size: 1.4em; gap: 8px; }
       .menu-item { padding: 12px 18px; font-size: 0.9em; }
-      button, .primary-btn, .secondary-btn { 
-        font-size: 0.9em; 
-        padding: 8px 14px; 
-      }
+      button, .primary-btn { font-size: 0.9em; padding: 8px 14px; }
     }
   </style>
 </head>
@@ -116,10 +107,10 @@
       { name: "플리 만들기", tags:["취미", "집"]},
       { name: "드라마 보기", tags:["집", "취미"]},
       { name: "게임이나 해", tags:["집", "취미"]},  
+      { name: "온라인 쇼핑", tags:["집"]},
       { name: "홈트", tags:["생산적인", "집"]},
       { name: "계획 짜기", tags:["생산적인", "집"]},
       { name: "주식 공부", tags:["생산적인", "집"]},
-      { name: "홈트", tags:["생산적인", "집", "블로그"]},
       { name: "밖에서 혼밥", tags:["야외"]},
       { name: "혼영", tags:["야외"]},
       { name: "혼술", tags:["집", "야외"]},
@@ -129,11 +120,10 @@
       { name: "다이소 쇼핑", tags:["야외"]},
       { name: "혼자 멀리?", tags:["힐링", "야외"]},
       { name: "혼자 쇼핑몰 구경", tags:["힐링", "야외"]},
-      { name: "산책이나 해", tags:["야외", "힐링]},
+      { name: "산책이나 해", tags:["야외", "힐링"]},
       { name: "잠이나 처 자", tags:["집"]},
       { name: "좀 씻어라", tags:["집"]},
 
-      
     ];
 
     let primaryChoices = [];
@@ -153,83 +143,34 @@
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = ""; // 초기화
 
-    let filtered;
+      let filtered;
 
-    // 아무것도 선택 안 했을 때
-    if (primaryChoices.length === 0 && secondaryChoices.length === 0) {
-      filtered = menuData;
-    } else { // 하나라도 선택했을 때
-      filtered = menuData.filter(item => {
-        const matchPrimary = primaryChoices.length === 0 || primaryChoices.some(tag => item.tags.includes(tag));
-        const matchSecondary = secondaryChoices.length === 0 || secondaryChoices.some(tag => item.tags.includes(tag));
-        const matchTertiary = tertiaryChoices.length === 0 || tertiaryChoices.some(tag => item.tags.includes(tag));
-        return matchPrimary && matchSecondary;
-      });
+      if (primaryChoices.length === 0) {
+        filtered = menuData;
+      } else {
+        filtered = menuData.filter(item => {
+          return primaryChoices.some(tag => item.tags.includes(tag));
+        });
 
-    if (filtered.length === 0) {
+        if (filtered.length === 0) {
+          const span = document.createElement("span");
+          span.className = "menu-item";
+          span.textContent = "걍 집에 처박혀있어";
+          resultDiv.appendChild(span);
+          return;
+        }
+      }
+
+      const randomItem = filtered[Math.floor(Math.random() * filtered.length)];
       const span = document.createElement("span");
       span.className = "menu-item";
-      span.textContent = "걍 집에 처박혀있어";
+      span.textContent = randomItem.name;
       resultDiv.appendChild(span);
-      return;
     }
-  }
-
-  // 랜덤으로 한 개 선택
-  const randomItem = filtered[Math.floor(Math.random() * filtered.length)];
-  const span = document.createElement("span");
-  span.className = "menu-item";
-  span.textContent = randomItem.name;
-  resultDiv.appendChild(span);
-}
-</script>
+  </script>
 
   <div id="footer-info">
     <p>돈이 있다면 할 게 많아진다.</p>
   </div>
-
-<div class="container">
-  <button onclick="toggleMenuTable()" style="background-color:#555; color:white; padding:10px 30px; border-radius:15px;">모든 메뉴 보기</button>
-</div>
-
-<div id="menu-table-container" style="display:none; margin-top:20px; max-height:300px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:10px;">
-  <table id="menu-table" style="width:100%; border-collapse:collapse; font-size:0.9em;">
-    <thead>
-      <tr style="background-color:#f0f0f0;">
-        <th style="border:1px solid #ccc; padding:5px;">누구랑?</th>
-        <th style="border:1px solid #ccc; padding:5px;">어떤 느낌?</th>
-        <th style="border:1px solid #ccc; padding:5px;">장소</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- JS에서 채워짐 -->
-    </tbody>
-  </table>
-</div>
-<script>
-  function toggleMenuTable() {
-    const container = document.getElementById('menu-table-container');
-    container.style.display = container.style.display === 'none' ? 'block' : 'none';
-    
-    if(container.style.display === 'block') {
-      populateMenuTable();
-    }
-  }
-
-  function populateMenuTable() {
-    const tbody = document.querySelector('#menu-table tbody');
-    tbody.innerHTML = ''; // 초기화
-    
-    menuData.forEach(item => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="border:1px solid #ccc; padding:5px;">${item.name}</td>
-        <td style="border:1px solid #ccc; padding:5px;">${item.tags[0] || ''}</td>
-        <td style="border:1px solid #ccc; padding:5px;">${item.tags.slice(1).join(', ')}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-</script>
 </body>
 </html>
